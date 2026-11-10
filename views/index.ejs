@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <h1>Plan your year around public holidays</h1>
+  <p>Pick a country and a year to see every public holiday, how many fall on a weekend,
+    and which long weekends are worth planning a trip for.</p>
+</section>
+
+<section class="card" aria-labelledby="search-title">
+  <h2 id="search-title">Find public holidays</h2>
+  <%- include('partials/search-form') %>
+</section>
+
+<section class="steps" aria-label="How it works">
+  <div class="step"><span class="step-number">1</span><p>Choose a country and a year.</p></div>
+  <div class="step"><span class="step-number">2</span><p>We ask the Nager.Date service for the holidays and long weekends.</p></div>
+  <div class="step"><span class="step-number">3</span><p>You get a table, statistics, a chart and a countdown to the next day off.</p></div>
+</section>
+
+<%- include('partials/footer') %>

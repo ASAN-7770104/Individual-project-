@@ -1,0 +1,54 @@
+<%# Search form used on the home page and (compact) on the result page.
+    Needs: countries, values, errors, minYear, maxYear, months, types.
+    Optional: compact (boolean) %>
+<% const isCompact = typeof compact !== 'undefined' && compact; %>
+
+<% if (errors.length > 0) { %>
+  <div class="alert alert-error" role="alert">
+    <strong>Please fix the following:</strong>
+    <ul>
+      <% errors.forEach((message) => { %>
+        <li><%= message %></li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>
+
+<form class="search-form <%= isCompact ? 'is-compact' : '' %>" action="/holidays" method="post" novalidate>
+  <div class="field">
+    <label for="country">Country</label>
+    <select id="country" name="country" required>
+      <% countries.forEach((item) => { %>
+        <option value="<%= item.countryCode %>" <%= item.countryCode === values.country ? 'selected' : '' %>><%= item.name %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="year">Year</label>
+    <input id="year" name="year" type="number" inputmode="numeric" min="<%= minYear %>" max="<%= maxYear %>"
+           value="<%= values.year %>" title="Year from <%= minYear %> to <%= maxYear %>" required>
+  </div>
+
+  <div class="field">
+    <label for="month">Month <span class="optional">(optional)</span></label>
+    <select id="month" name="month">
+      <option value="">Whole year</option>
+      <% months.forEach((name, index) => { %>
+        <option value="<%= index + 1 %>" <%= String(values.month) === String(index + 1) ? 'selected' : '' %>><%= name %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="type">Type <span class="optional">(optional)</span></label>
+    <select id="type" name="type">
+      <option value="">All types</option>
+      <% types.forEach((name) => { %>
+        <option value="<%= name %>" <%= values.type === name ? 'selected' : '' %>><%= name %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <button class="btn" type="submit">Show holidays</button>
+</form>

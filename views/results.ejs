@@ -1,0 +1,158 @@
+<%- include('partials/header') %>
+
+<%
+  // Build the shareable link (keeps the filters in the query string).
+  const params = new URLSearchParams();
+  if (filters.month) params.set('month', filters.month);
+  if (filters.type) params.set('type', filters.type);
+  const query = params.toString();
+  const permalink = `/holidays/${country.countryCode}/${year}${query ? '?' + query : ''}`;
+%>
+
+<section class="result-head">
+  <div>
+    <p class="eyebrow">Public holidays</p>
+    <h1><%= country.name %>, <%= year %></h1>
+    <p class="chips">
+      <% if (filters.month) { %><span class="chip">Month: <%= MONTHS[filters.month - 1] %></span><% } %>
+      <% if (filters.type) { %><span class="chip">Type: <%= filters.type %></span><% } %>
+      <% if (!filters.month && !filters.type) { %><span class="chip">Whole year, all types</span><% } %>
+    </p>
+  </div>
+  <p class="links">
+    <a class="btn btn-ghost" href="/country/<%= country.countryCode %>">About <%= country.name %></a>
+    <a class="btn btn-ghost" href="<%= permalink %>">Link to this result</a>
+  </p>
+</section>
+
+<section class="card card-compact" aria-label="Change the search">
+  <%- include('partials/search-form', { compact: true }) %>
+</section>
+
+<% if (summary.total === 0) { %>
+
+  <section class="empty-state">
+    <h2>No results</h2>
+    <% if (summary.totalUnfiltered > 0) { %>
+      <p>There are <%= summary.totalUnfiltered %> holidays in <%= year %>, but none match your filters.
+        Try choosing "Whole year" or "All types".</p>
+    <% } else { %>
+      <p>The service has no holiday data for <%= country.name %> in <%= year %>.
+        Try another year or another country.</p>
+    <% } %>
+  </section>
+
+<% } else { %>
+
+  <section class="stats" aria-label="Summary">
+    <div class="stat">
+      <span class="stat-value"><%= summary.total %></span>
+      <span class="stat-label">holiday<%= summary.total === 1 ? '' : 's' %> found</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value"><%= summary.weekendCount %></span>
+      <span class="stat-label">fall on a weekend</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value"><%= summary.busiestMonth !== null ? MONTHS[summary.busiestMonth] : '-' %></span>
+      <span class="stat-label">busiest month (<%= summary.maxPerMonth %>)</span>
+    </div>
+    <div class="stat">
+      <% if (summary.next) { %>
+        <span class="stat-value"><%= relativeDays(summary.next.daysFromToday) %></span>
+        <span class="stat-label">next: <%= summary.next.name %> (<%= formatShortDate(summary.next.date) %>)</span>
+      <% } else { %>
+        <span class="stat-value">-</span>
+        <span class="stat-label">no more holidays this year</span>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="chart-title">
+    <h2 id="chart-title">Holidays per month</h2>
+    <div class="chart" role="img" aria-label="Bar chart of holidays per month">
+      <% summary.byMonth.forEach((count, index) => { %>
+        <div class="bar-col">
+          <span class="bar-count"><%= count %></span>
+          <div class="bar-track">
+            <div class="bar <%= index === summary.busiestMonth ? 'is-top' : '' %>"
+                 style="height: <%= summary.maxPerMonth ? Math.round((count / summary.maxPerMonth) * 100) : 0 %>%"></div>
+          </div>
+          <span class="bar-label"><%= MONTHS[index].slice(0, 3) %></span>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="table-title">
+    <h2 id="table-title">All holidays</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Day</th>
+            <th scope="col">Holiday</th>
+            <th scope="col">Type</th>
+            <th scope="col">Scope</th>
+            <th scope="col">When</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% summary.holidays.forEach((holiday) => { %>
+            <tr class="<%= holiday.daysFromToday < 0 ? 'is-past' : '' %>">
+              <td data-label="Date"><%= formatDate(holiday.date) %></td>
+              <td data-label="Day">
+                <%= holiday.weekday %>
+                <% if (holiday.isWeekend) { %><span class="pill pill-weekend">weekend</span><% } %>
+              </td>
+              <td data-label="Holiday">
+                <strong><%= holiday.name %></strong>
+                <% if (holiday.localName) { %><br><span class="muted"><%= holiday.localName %></span><% } %>
+              </td>
+              <td data-label="Type">
+                <% if (holiday.types.length === 0) { %><span class="muted">-</span><% } %>
+                <% holiday.types.forEach((typeName) => { %><span class="pill"><%= typeName %></span> <% }) %>
+              </td>
+              <td data-label="Scope">
+                <% if (holiday.nationwide) { %>Nationwide<% } else { %>
+                  Regional<% if (holiday.regions.length > 0) { %> <span class="muted">(<%= holiday.regions.length %> regions)</span><% } %>
+                <% } %>
+              </td>
+              <td data-label="When"><%= relativeDays(holiday.daysFromToday) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+<% } %>
+
+<section class="card" aria-labelledby="long-title">
+  <h2 id="long-title">Long weekends in <%= year %></h2>
+  <% if (longWeekends === null) { %>
+    <p class="muted">Long weekend data is temporarily unavailable. The holidays above are still correct.</p>
+  <% } else if (longWeekends.list.length === 0) { %>
+    <p class="muted">No long weekends were found for <%= country.name %> in <%= year %>.</p>
+  <% } else { %>
+    <p class="muted">Longest: <strong><%= longWeekends.longest.dayCount %> days</strong>
+      (<%= formatRange(longWeekends.longest.startDate, longWeekends.longest.endDate) %>)</p>
+    <div class="weekend-grid">
+      <% longWeekends.list.forEach((item) => { %>
+        <article class="weekend <%= item === longWeekends.longest ? 'is-top' : '' %>">
+          <h3><%= item.dayCount %> days off</h3>
+          <p><%= formatRange(item.startDate, item.endDate) %></p>
+          <% if (item.needBridgeDay) { %>
+            <p class="muted">Take a day off on
+              <%= item.bridgeDays.map((day) => formatShortDate(day)).join(', ') %> to get it.</p>
+          <% } else { %>
+            <p class="muted">No extra days off needed.</p>
+          <% } %>
+        </article>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

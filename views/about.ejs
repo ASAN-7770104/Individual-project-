@@ -1,0 +1,32 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <h1>About Holiday Planner</h1>
+  <p>A small server-side web application that turns raw public-holiday data into a readable plan.</p>
+</section>
+
+<section class="card">
+  <h2>The API</h2>
+  <p>Data comes from <a href="https://date.nager.at/Api" target="_blank" rel="noopener">Nager.Date</a>,
+    a free public API that needs no API key. The server calls it with Axios and shows the result with EJS.</p>
+  <ul class="plain-list">
+    <li><code>GET /AvailableCountries</code> fills the country list.</li>
+    <li><code>GET /PublicHolidays/{year}/{countryCode}</code> gives the holidays.</li>
+    <li><code>GET /LongWeekend/{year}/{countryCode}</code> gives long weekends and bridge days.</li>
+    <li><code>GET /CountryInfo/{countryCode}</code> gives region and bordering countries.</li>
+    <li><code>GET /NextPublicHolidays/{countryCode}</code> gives the upcoming holidays.</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2>What the app adds</h2>
+  <ul class="plain-list">
+    <li>Sorts and filters holidays by month and type.</li>
+    <li>Marks holidays that fall on a weekend and counts them.</li>
+    <li>Shows a countdown to the next holiday and a holidays-per-month chart.</li>
+    <li>Checks the input on the server and explains problems in plain words.</li>
+    <li>Handles timeouts, rate limits and API errors without crashing.</li>
+  </ul>
+</section>
+
+<%- include('partials/footer') %>
