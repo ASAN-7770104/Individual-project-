@@ -1,63 +1,71 @@
-# Holiday Planner
+# Book Finder
 
-A small server-side web application that shows the **public holidays of any country and year**,
-counts how many fall on a weekend, draws a holidays-per-month chart, counts down to the next
-day off and lists the **long weekends** worth planning a trip for.
+A small server-side web application to **search books** with the Open Library API. For every
+search it shows the number of results, a **books-per-decade chart**, the most frequent authors,
+and cards with covers. A book page shows the description, **rating bars**, subjects and links;
+author and subject pages list their books.
 
 Built for *Web Development II* (Individual Project) with **Express, Node.js, Axios and EJS**.
 
 ## API used
 
-**[Nager.Date](https://date.nager.at/Api)**: a free public holiday API. It needs **no API key**.
-It is listed in the [public-apis](https://github.com/public-apis/public-apis) collection (Calendar).
+**[Open Library](https://openlibrary.org/developers/api)**: a free public API about books. It needs **no API key**.
+It is listed in the [public-apis](https://github.com/public-apis/public-apis) collection (Books).
 
 | Endpoint | Used for |
 |---|---|
-| `GET /AvailableCountries` | country drop-down (cached for 1 hour) |
-| `GET /PublicHolidays/{year}/{countryCode}` | the holiday table, statistics and chart |
-| `GET /LongWeekend/{year}/{countryCode}` | long weekends and bridge days |
-| `GET /CountryInfo/{countryCode}` | country page (region, bordering countries) |
-| `GET /NextPublicHolidays/{countryCode}` | upcoming holidays on the country page |
+| `GET /search.json` | search by anything, title, author or subject, with sorting and paging |
+| `GET /works/{id}.json` | details of one book |
+| `GET /works/{id}/ratings.json` | rating average and the 1-5 star distribution |
+| `GET /authors/{id}.json` | author name, dates and biography |
+| `GET /authors/{id}/works.json` | books of one author |
+| `GET /subjects/{subject}.json` | books of one subject |
+
+Cover images are loaded by the browser from `covers.openlibrary.org`.
 
 ## Features
 
-- Search by **country**, **year**, optional **month** and optional **holiday type**.
-- Holiday table sorted by date, with weekday, local name, type, scope (nationwide / regional)
-  and "in N days / N days ago".
-- Statistics: number of holidays, how many fall on a weekend, busiest month, next holiday countdown.
-- Pure-CSS bar chart of holidays per month.
-- Long weekends with the extra day(s) off needed ("bridge days"); the longest one is highlighted.
-- Country page with region, neighbouring countries (clickable) and upcoming holidays.
-- Shareable result links, e.g. `/holidays/KZ/2026?month=5`.
+- Search by **anything, title, author or subject**, sorted by relevance, newest or oldest.
+- Results page: number of books found, years, the book with the most editions, a CSS bar chart
+  of books per decade, the most frequent authors, book cards and pagination (up to 50 pages).
+- Book page: cleaned description (Markdown links and reference lists removed), rating average and bars,
+  subjects (clickable) and external links.
+- Author page: photo, biography and the author's books. Subject page: books, chart and top authors.
+- Shareable links, e.g. `/search?q=dune&mode=title&page=2`.
 - Server-side validation with friendly messages, a custom 404 page and a central error handler.
 - Never crashes on bad input or API failures (timeouts, no connection, rate limit, 4xx/5xx, empty data).
-- Responsive layout (the table becomes cards on phones) with automatic light/dark theme.
+  A failed extra request (authors, ratings) does not break the page; a missing cover becomes a "No cover" box.
+- A 10-minute in-memory cache and one automatic retry for the API requests.
+- Responsive layout (cards stack on phones) with automatic light/dark theme.
 
 ## Routes
 
 | Method | Route | Description |
 |---|---|---|
-| GET | `/` | Home page with the search form |
-| POST | `/holidays` | Validates the form, calls the API, shows the result page |
-| GET | `/holidays/:code/:year` | Same result page as a shareable link (`?month=` and `?type=` optional) |
-| GET | `/country/:code` | Country details and upcoming holidays |
+| GET | `/` | Home page with the search form and quick subject links |
+| POST | `/search` | Validates the form, calls the API, shows the results |
+| GET | `/search?q=&mode=&sort=&page=` | Same results page as a link (pagination, sharing) |
+| GET | `/book/:id` | Book details (id like `OL893414W`) |
+| GET | `/author/:id` | Author details and books (id like `OL79034A`) |
+| GET | `/subjects` | List of quick subjects |
+| GET | `/subjects/:name` | Books of one subject (e.g. `science_fiction`) |
 | GET | `/about` | About the app and the API |
 | any other | | Custom 404 page |
 
 ## Project structure (MVC)
 
 ```
-holiday-planner/
-├── app.js                       # creates the app, registers middleware and routes
-├── routes/                      # URL -> controller mapping
-├── controllers/                 # request handling logic (validate result -> service -> view)
-├── services/nagerService.js     # all Axios calls to the external API + error translation
-├── middleware/                  # requestLogger, validateHolidayForm, notFound, errorHandler
-├── utils/                       # dates, holiday statistics, AppError, constants
-├── views/                       # EJS pages
-│   └── partials/                # header, footer, search form
-├── public/                      # css and client js
-├── tests/                       # unit tests (node:test)
+book-finder/
+├── app.js                          # creates the app, registers middleware and routes
+├── routes/                         # URL -> controller mapping
+├── controllers/                    # request handling logic (validated input -> service -> view)
+├── services/openLibraryService.js  # all Axios calls to the external API, cache, retry, error translation
+├── middleware/                     # requestLogger, validateSearchForm, validateId, notFound, errorHandler
+├── utils/                          # book statistics, text cleaning, AppError, constants
+├── views/                          # EJS pages
+│   └── partials/                   # header, footer, search form, book card, pagination
+├── public/                         # css and client js
+├── tests/                          # unit tests (node:test)
 ├── .env.example
 └── package.json
 ```
@@ -65,8 +73,9 @@ holiday-planner/
 ## Middleware
 
 - **Built-in:** `express.static`, `express.urlencoded`, `express.json`
-- **Custom:** `requestLogger` (time, method, URL, status, duration) and `validateHolidayForm`
-  (checks country, year, month and type before any API request is made)
+- **Custom:** `requestLogger` (time, method, URL, status, duration), `validateSearchForm`
+  (checks the search text, mode, sort and page before any API request) and `validateId`
+  (checks book, author and subject ids in the URL)
 - **404 handler** (`notFound`) and a **centralized error handler** `(err, req, res, next)`
 
 ## Installation and run
@@ -86,10 +95,10 @@ Open <http://localhost:3000>.
 | Variable | Default | Meaning |
 |---|---|---|
 | `PORT` | `3000` | port of the web server |
-| `NAGER_BASE_URL` | `https://date.nager.at/api/v3` | API base URL |
-| `API_TIMEOUT_MS` | `8000` | how long to wait for the API |
+| `OPENLIBRARY_BASE_URL` | `https://openlibrary.org` | API base URL |
+| `API_TIMEOUT_MS` | `10000` | how long to wait for the API |
 
-Useful scripts: `npm run dev` (restart on file changes), `npm test` (unit tests).
+Useful scripts: `npm run dev` (restart on file changes), `npm test` (21 unit tests).
 
 ## Screenshots
 
@@ -97,12 +106,12 @@ Useful scripts: `npm run dev` (restart on file changes), `npm test` (unit tests)
 |---|---|
 | ![Home page](docs/screenshots/01-home.png) | ![Results page](docs/screenshots/02-results.png) |
 
-| Validation message | Country page |
+| Book page | Validation message |
 |---|---|
-| ![Validation error](docs/screenshots/03-validation-error.png) | ![Country page](docs/screenshots/04-country.png) |
+| ![Book page](docs/screenshots/03-book.png) | ![Validation error](docs/screenshots/04-validation-error.png) |
 
 ## Credits and AI disclosure
 
-- Holiday data: [Nager.Date](https://date.nager.at) (free public API).
+- Book data and covers: [Open Library](https://openlibrary.org) (free public API).
 - AI assistance (Claude) was used for this project. Details are in the AI Declaration
   submitted in Canvas.

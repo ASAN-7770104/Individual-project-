@@ -1,7 +1,7 @@
 {
-  "name": "holiday-planner",
+  "name": "book-finder",
   "version": "1.0.0",
-  "description": "Public holidays explorer built with Express, Axios and EJS on top of the Nager.Date API.",
+  "description": "Book search and statistics built with Express, Axios and EJS on top of the Open Library API.",
   "main": "app.js",
   "type": "module",
   "scripts": {
@@ -9,13 +9,7 @@
     "dev": "node --watch app.js",
     "test": "node --test"
   },
-  "keywords": [
-    "express",
-    "axios",
-    "ejs",
-    "public-api",
-    "holidays"
-  ],
+  "keywords": ["express", "axios", "ejs", "public-api", "books", "open-library"],
   "license": "ISC",
   "dependencies": {
     "axios": "^1.21.1",

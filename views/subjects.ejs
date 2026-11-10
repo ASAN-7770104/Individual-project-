@@ -1,0 +1,17 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <h1>Browse subjects</h1>
+  <p>Pick a subject to see its books, the busiest decades and the most frequent authors.</p>
+</section>
+
+<section class="subject-grid">
+  <% subjects.forEach((item) => { %>
+    <a class="subject-card" href="/subjects/<%= item.slug %>">
+      <strong><%= item.label %></strong>
+      <span class="muted">See books &rarr;</span>
+    </a>
+  <% }) %>
+</section>
+
+<%- include('partials/footer') %>

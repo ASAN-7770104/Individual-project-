@@ -1,30 +1,30 @@
 <%- include('partials/header') %>
 
 <section class="hero">
-  <h1>About Holiday Planner</h1>
-  <p>A small server-side web application that turns raw public-holiday data into a readable plan.</p>
+  <h1>About Book Finder</h1>
+  <p>A small server-side web application that turns raw book data into readable pages with statistics.</p>
 </section>
 
 <section class="card">
   <h2>The API</h2>
-  <p>Data comes from <a href="https://date.nager.at/Api" target="_blank" rel="noopener">Nager.Date</a>,
+  <p>Data comes from <a href="https://openlibrary.org/developers/api" target="_blank" rel="noopener">Open Library</a>,
     a free public API that needs no API key. The server calls it with Axios and shows the result with EJS.</p>
   <ul class="plain-list">
-    <li><code>GET /AvailableCountries</code> fills the country list.</li>
-    <li><code>GET /PublicHolidays/{year}/{countryCode}</code> gives the holidays.</li>
-    <li><code>GET /LongWeekend/{year}/{countryCode}</code> gives long weekends and bridge days.</li>
-    <li><code>GET /CountryInfo/{countryCode}</code> gives region and bordering countries.</li>
-    <li><code>GET /NextPublicHolidays/{countryCode}</code> gives the upcoming holidays.</li>
+    <li><code>GET /search.json</code> searches books by anything, title, author or subject.</li>
+    <li><code>GET /works/{id}.json</code> gives the details of one book.</li>
+    <li><code>GET /works/{id}/ratings.json</code> gives the rating of a book.</li>
+    <li><code>GET /authors/{id}.json</code> and <code>/authors/{id}/works.json</code> give an author and the author's books.</li>
+    <li><code>GET /subjects/{subject}.json</code> gives the books of one subject.</li>
   </ul>
 </section>
 
 <section class="card">
   <h2>What the app adds</h2>
   <ul class="plain-list">
-    <li>Sorts and filters holidays by month and type.</li>
-    <li>Marks holidays that fall on a weekend and counts them.</li>
-    <li>Shows a countdown to the next holiday and a holidays-per-month chart.</li>
     <li>Checks the input on the server and explains problems in plain words.</li>
+    <li>Counts books per decade, finds the most frequent authors and the book with the most editions.</li>
+    <li>Cleans descriptions, builds rating bars and shows placeholders for missing covers.</li>
+    <li>Pagination for search results, authors and subjects.</li>
     <li>Handles timeouts, rate limits and API errors without crashing.</li>
   </ul>
 </section>

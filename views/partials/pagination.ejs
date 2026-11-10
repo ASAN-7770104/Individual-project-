@@ -1,0 +1,16 @@
+<%# "Previous / Next" links. Needs: pagination = { page, totalPages, prevUrl, nextUrl } %>
+<% if (pagination.totalPages > 1) { %>
+  <nav class="pagination" aria-label="Pages">
+    <% if (pagination.prevUrl) { %>
+      <a class="btn btn-ghost" href="<%= pagination.prevUrl %>">&larr; Previous</a>
+    <% } else { %>
+      <span class="btn btn-ghost is-disabled" aria-disabled="true">&larr; Previous</span>
+    <% } %>
+    <span class="muted">Page <%= pagination.page %> of <%= pagination.totalPages %></span>
+    <% if (pagination.nextUrl) { %>
+      <a class="btn btn-ghost" href="<%= pagination.nextUrl %>">Next &rarr;</a>
+    <% } else { %>
+      <span class="btn btn-ghost is-disabled" aria-disabled="true">Next &rarr;</span>
+    <% } %>
+  </nav>
+<% } %>

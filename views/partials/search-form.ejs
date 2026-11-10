@@ -1,5 +1,5 @@
-<%# Search form used on the home page and (compact) on the result page.
-    Needs: countries, values, errors, minYear, maxYear, months, types.
+<%# Search form used on the home page and (compact) on the results page.
+    Needs: values, errors, modes, sorts, queryMin, queryMax.
     Optional: compact (boolean) %>
 <% const isCompact = typeof compact !== 'undefined' && compact; %>
 
@@ -14,41 +14,30 @@
   </div>
 <% } %>
 
-<form class="search-form <%= isCompact ? 'is-compact' : '' %>" action="/holidays" method="post" novalidate>
+<form class="search-form <%= isCompact ? 'is-compact' : '' %>" action="/search" method="post" novalidate>
+  <div class="field field-wide">
+    <label for="q">Search text</label>
+    <input id="q" name="q" type="search" value="<%= values.q %>" maxlength="<%= queryMax %>"
+           placeholder="e.g. Dune, Tolkien, philosophy" autocomplete="off" required>
+  </div>
+
   <div class="field">
-    <label for="country">Country</label>
-    <select id="country" name="country" required>
-      <% countries.forEach((item) => { %>
-        <option value="<%= item.countryCode %>" <%= item.countryCode === values.country ? 'selected' : '' %>><%= item.name %></option>
+    <label for="mode">Search in</label>
+    <select id="mode" name="mode">
+      <% modes.forEach((item) => { %>
+        <option value="<%= item.value %>" <%= values.mode === item.value ? 'selected' : '' %>><%= item.label %></option>
       <% }) %>
     </select>
   </div>
 
   <div class="field">
-    <label for="year">Year</label>
-    <input id="year" name="year" type="number" inputmode="numeric" min="<%= minYear %>" max="<%= maxYear %>"
-           value="<%= values.year %>" title="Year from <%= minYear %> to <%= maxYear %>" required>
-  </div>
-
-  <div class="field">
-    <label for="month">Month <span class="optional">(optional)</span></label>
-    <select id="month" name="month">
-      <option value="">Whole year</option>
-      <% months.forEach((name, index) => { %>
-        <option value="<%= index + 1 %>" <%= String(values.month) === String(index + 1) ? 'selected' : '' %>><%= name %></option>
+    <label for="sort">Sort by</label>
+    <select id="sort" name="sort">
+      <% sorts.forEach((item) => { %>
+        <option value="<%= item.value %>" <%= values.sort === item.value ? 'selected' : '' %>><%= item.label %></option>
       <% }) %>
     </select>
   </div>
 
-  <div class="field">
-    <label for="type">Type <span class="optional">(optional)</span></label>
-    <select id="type" name="type">
-      <option value="">All types</option>
-      <% types.forEach((name) => { %>
-        <option value="<%= name %>" <%= values.type === name ? 'selected' : '' %>><%= name %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <button class="btn" type="submit">Show holidays</button>
+  <button class="btn" type="submit">Search books</button>
 </form>

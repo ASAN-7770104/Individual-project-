@@ -1,20 +1,30 @@
 <%- include('partials/header') %>
 
 <section class="hero">
-  <h1>Plan your year around public holidays</h1>
-  <p>Pick a country and a year to see every public holiday, how many fall on a weekend,
-    and which long weekends are worth planning a trip for.</p>
+  <h1>Find your next book</h1>
+  <p>Search millions of books by title, author or subject. See covers, ratings, descriptions
+    and statistics about the results, powered by the Open Library API.</p>
 </section>
 
 <section class="card" aria-labelledby="search-title">
-  <h2 id="search-title">Find public holidays</h2>
+  <h2 id="search-title">Search books</h2>
   <%- include('partials/search-form') %>
 </section>
 
+<section class="card" aria-labelledby="subjects-title">
+  <h2 id="subjects-title">Or browse a subject</h2>
+  <p class="chips">
+    <% subjects.forEach((item) => { %>
+      <a class="chip chip-link" href="/subjects/<%= item.slug %>"><%= item.label %></a>
+    <% }) %>
+    <a class="chip chip-link" href="/subjects">All subjects &rarr;</a>
+  </p>
+</section>
+
 <section class="steps" aria-label="How it works">
-  <div class="step"><span class="step-number">1</span><p>Choose a country and a year.</p></div>
-  <div class="step"><span class="step-number">2</span><p>We ask the Nager.Date service for the holidays and long weekends.</p></div>
-  <div class="step"><span class="step-number">3</span><p>You get a table, statistics, a chart and a countdown to the next day off.</p></div>
+  <div class="step"><span class="step-number">1</span><p>Type a title, an author or a subject.</p></div>
+  <div class="step"><span class="step-number">2</span><p>We ask Open Library and sort the answer for you.</p></div>
+  <div class="step"><span class="step-number">3</span><p>Open a book to see its description, rating and author.</p></div>
 </section>
 
 <%- include('partials/footer') %>

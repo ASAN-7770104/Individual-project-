@@ -1,0 +1,63 @@
+<%- include('partials/header') %>
+
+<section class="result-head">
+  <div>
+    <p class="eyebrow">Subject</p>
+    <h1><%= subject.name %></h1>
+    <p class="muted"><%= formatNumber(subject.total) %> book<%= subject.total === 1 ? '' : 's' %> on Open Library</p>
+  </div>
+  <p class="links">
+    <a class="btn btn-ghost" href="/subjects">All subjects</a>
+  </p>
+</section>
+
+<% if (books.length === 0) { %>
+
+  <section class="empty-state">
+    <h2>No results</h2>
+    <p>Open Library has no books listed under this subject name. Try another subject or use the search.</p>
+    <p><a class="btn" href="/">Go to search</a></p>
+  </section>
+
+<% } else { %>
+
+  <% if (decades.length > 0) { %>
+    <section class="card" aria-labelledby="chart-title">
+      <h2 id="chart-title">Books per decade (this page)</h2>
+      <div class="chart" style="--cols: <%= decades.length %>" role="img" aria-label="Bar chart of books per decade">
+        <% decades.forEach((decade) => { %>
+          <div class="bar-col">
+            <span class="bar-count"><%= decade.count %></span>
+            <div class="bar-track"><div class="bar" style="height: <%= decade.percent %>%"></div></div>
+            <span class="bar-label"><%= decade.label %></span>
+          </div>
+        <% }) %>
+      </div>
+      <% if (topAuthors.length > 0) { %>
+        <h3>Most frequent authors on this page</h3>
+        <p class="chips">
+          <% topAuthors.forEach((author) => { %>
+            <% if (author.id) { %>
+              <a class="chip chip-link" href="/author/<%= author.id %>"><%= author.name %> (<%= author.count %>)</a>
+            <% } else { %>
+              <span class="chip"><%= author.name %> (<%= author.count %>)</span>
+            <% } %>
+          <% }) %>
+        </p>
+      <% } %>
+    </section>
+  <% } %>
+
+  <section aria-label="Books">
+    <div class="book-grid">
+      <% books.forEach((book) => { %>
+        <%- include('partials/book-card', { book }) %>
+      <% }) %>
+    </div>
+  </section>
+
+  <%- include('partials/pagination') %>
+
+<% } %>
+
+<%- include('partials/footer') %>

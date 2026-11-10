@@ -3,15 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= title %> · Holiday Planner</title>
+  <title><%= title %> · Book Finder</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <header class="site-header">
     <div class="container nav">
-      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&#9728;</span> Holiday Planner</a>
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&#128214;</span> Book Finder</a>
       <nav aria-label="Main navigation">
-        <a href="/" class="<%= active === 'home' ? 'active' : '' %>">Home</a>
+        <a href="/" class="<%= active === 'home' ? 'active' : '' %>">Search</a>
+        <a href="/subjects" class="<%= active === 'subjects' ? 'active' : '' %>">Subjects</a>
         <a href="/about" class="<%= active === 'about' ? 'active' : '' %>">About</a>
       </nav>
     </div>

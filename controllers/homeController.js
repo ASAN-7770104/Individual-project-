@@ -1,25 +1,20 @@
-// Controller for the static-ish pages: home (search form) and about.
-import { getCountries } from '../services/nagerService.js';
-import { MIN_YEAR, MAX_YEAR, MONTHS, HOLIDAY_TYPES, DEFAULT_COUNTRY } from '../utils/constants.js';
+// Controller for the pages that need no API request: home, subjects list, about.
+import { POPULAR_SUBJECTS } from '../utils/constants.js';
+import { searchFormData } from '../utils/viewData.js';
 
-/** GET / : shows the search form. */
-export async function showHome(req, res, next) {
-  try {
-    const countries = await getCountries(); // API request #1 (cached)
-    res.render('index', {
-      title: 'Find public holidays',
-      active: 'home',
-      countries,
-      errors: [],
-      values: { country: DEFAULT_COUNTRY, year: new Date().getFullYear(), month: '', type: '' },
-      minYear: MIN_YEAR,
-      maxYear: MAX_YEAR,
-      months: MONTHS,
-      types: HOLIDAY_TYPES,
-    });
-  } catch (error) {
-    next(error); // the central error handler shows the friendly page
-  }
+/** GET / : the search form and quick subject links. */
+export function showHome(req, res) {
+  res.render('index', {
+    title: 'Find your next book',
+    active: 'home',
+    ...searchFormData(),
+    subjects: POPULAR_SUBJECTS.slice(0, 8),
+  });
+}
+
+/** GET /subjects : all quick subject links. */
+export function showSubjects(req, res) {
+  res.render('subjects', { title: 'Browse subjects', active: 'subjects', subjects: POPULAR_SUBJECTS });
 }
 
 /** GET /about */

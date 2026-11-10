@@ -1,0 +1,20 @@
+<%# One book card. Needs: book = { id, title, authors: [{name, id}], year, cover, editions } %>
+<article class="book-card">
+  <a class="cover-link" href="/book/<%= book.id %>" aria-label="Open <%= book.title %>">
+    <% if (book.cover) { %>
+      <img class="cover" src="<%= book.cover %>" alt="Cover of <%= book.title %>" loading="lazy" width="120" height="180">
+    <% } else { %>
+      <div class="cover cover-empty"><span>No cover</span></div>
+    <% } %>
+  </a>
+  <div class="book-info">
+    <h3><a href="/book/<%= book.id %>"><%= book.title %></a></h3>
+    <p class="book-authors">
+      <% if (book.authors.length === 0) { %><span class="muted">Unknown author</span><% } %>
+      <% book.authors.slice(0, 3).forEach((author, index) => { %><%= index > 0 ? ', ' : '' %><% if (author.id) { %><a href="/author/<%= author.id %>"><%= author.name %></a><% } else { %><%= author.name %><% } %><% }) %>
+    </p>
+    <p class="muted book-meta">
+      <%= book.year ? 'First published ' + book.year : 'Year unknown' %><% if (book.editions) { %> &middot; <%= book.editions %> edition<%= book.editions === 1 ? '' : 's' %><% } %>
+    </p>
+  </div>
+</article>

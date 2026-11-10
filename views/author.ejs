@@ -1,0 +1,49 @@
+<%- include('partials/header') %>
+
+<section class="book-detail">
+  <div class="book-cover-col">
+    <% if (author.photo) { %>
+      <img class="cover cover-large" src="<%= author.photo %>" alt="Photo of <%= author.name %>" width="260" height="320">
+    <% } else { %>
+      <div class="cover cover-large cover-empty"><span>No photo</span></div>
+    <% } %>
+  </div>
+
+  <div class="book-main">
+    <p class="eyebrow">Author</p>
+    <h1><%= author.name %></h1>
+    <p class="chips">
+      <% if (author.birth) { %><span class="chip">Born: <%= author.birth %></span><% } %>
+      <% if (author.death) { %><span class="chip">Died: <%= author.death %></span><% } %>
+      <span class="chip"><%= formatNumber(totalBooks) %> book<%= totalBooks === 1 ? '' : 's' %> on Open Library</span>
+    </p>
+
+    <h2>Biography</h2>
+    <% if (author.bio.length === 0) { %>
+      <p class="muted">Open Library has no biography for this author.</p>
+    <% } else { %>
+      <% author.bio.forEach((paragraph) => { %><p><%= paragraph %></p><% }) %>
+    <% } %>
+
+    <p class="links">
+      <a class="btn" href="/search?<%= new URLSearchParams({ q: author.name, mode: 'author', sort: 'relevance' }) %>">Search all books by this author</a>
+      <a class="btn btn-ghost" href="<%= author.openLibraryUrl %>" target="_blank" rel="noopener">Open on Open Library</a>
+    </p>
+  </div>
+</section>
+
+<section aria-labelledby="works-title">
+  <h2 id="works-title">Books</h2>
+  <% if (books.length === 0) { %>
+    <div class="empty-state"><p>No books are listed for this author.</p></div>
+  <% } else { %>
+    <div class="book-grid">
+      <% books.forEach((book) => { %>
+        <%- include('partials/book-card', { book }) %>
+      <% }) %>
+    </div>
+    <%- include('partials/pagination') %>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

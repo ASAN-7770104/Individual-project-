@@ -1,0 +1,86 @@
+<%- include('partials/header') %>
+
+<section class="book-detail">
+  <div class="book-cover-col">
+    <% if (book.cover) { %>
+      <img class="cover cover-large" src="<%= book.cover %>" alt="Cover of <%= book.title %>" width="260" height="390">
+    <% } else { %>
+      <div class="cover cover-large cover-empty"><span>No cover</span></div>
+    <% } %>
+  </div>
+
+  <div class="book-main">
+    <p class="eyebrow">Book</p>
+    <h1><%= book.title %></h1>
+    <% if (book.subtitle) { %><p class="muted lead"><%= book.subtitle %></p><% } %>
+
+    <p class="by-line">
+      by
+      <% if (authors.length === 0) { %><span class="muted">unknown author</span><% } %>
+      <% authors.forEach((author, index) => { %><%= index > 0 ? ', ' : '' %><a href="/author/<%= author.id %>"><%= author.name %></a><% }) %>
+    </p>
+
+    <p class="chips">
+      <% if (book.firstPublished) { %><span class="chip">First published: <%= book.firstPublished %></span><% } %>
+      <% if (ratings && ratings.count > 0) { %>
+        <span class="chip">&#9733; <%= ratings.average.toFixed(1) %> / 5 (<%= formatNumber(ratings.count) %> ratings)</span>
+      <% } else { %>
+        <span class="chip">No ratings yet</span>
+      <% } %>
+    </p>
+
+    <h2>Description</h2>
+    <% if (book.description.length === 0) { %>
+      <p class="muted">Open Library has no description for this book.</p>
+    <% } else { %>
+      <% book.description.forEach((paragraph) => { %><p><%= paragraph %></p><% }) %>
+    <% } %>
+
+    <p><a class="btn btn-ghost" href="<%= book.openLibraryUrl %>" target="_blank" rel="noopener">Open on Open Library</a></p>
+  </div>
+</section>
+
+<% if (ratingBars.length > 0) { %>
+  <section class="card" aria-labelledby="ratings-title">
+    <h2 id="ratings-title">Ratings</h2>
+    <ul class="rating-bars">
+      <% ratingBars.forEach((row) => { %>
+        <li>
+          <span class="rating-stars"><%= row.stars %> &#9733;</span>
+          <span class="rating-track"><span class="rating-fill" style="width: <%= row.percent %>%"></span></span>
+          <span class="muted rating-count"><%= formatNumber(row.count) %> (<%= row.percent %>%)</span>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+<% } %>
+
+<section class="card" aria-labelledby="subjects-title">
+  <h2 id="subjects-title">Subjects</h2>
+  <% if (book.subjects.length === 0) { %>
+    <p class="muted">No subjects are listed for this book.</p>
+  <% } else { %>
+    <p class="chips">
+      <% book.subjects.forEach((subject) => { %>
+        <% if (subject.slug.length >= 2) { %>
+          <a class="chip chip-link" href="/subjects/<%= subject.slug %>"><%= subject.name %></a>
+        <% } else { %>
+          <span class="chip"><%= subject.name %></span>
+        <% } %>
+      <% }) %>
+    </p>
+  <% } %>
+</section>
+
+<% if (book.links.length > 0) { %>
+  <section class="card" aria-labelledby="links-title">
+    <h2 id="links-title">Links</h2>
+    <ul class="plain-list">
+      <% book.links.forEach((link) => { %>
+        <li><a href="<%= link.url %>" target="_blank" rel="noopener noreferrer"><%= link.title || link.url %></a></li>
+      <% }) %>
+    </ul>
+  </section>
+<% } %>
+
+<%- include('partials/footer') %>
