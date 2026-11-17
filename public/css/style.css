@@ -55,6 +55,11 @@ code { background: var(--accent-soft); padding: 1px 6px; border-radius: 6px; fon
 .muted { color: var(--muted); }
 .lead { font-size: 1.1rem; margin-top: -4px; }
 
+/* "Skip to content" link: hidden until a keyboard user focuses it */
+.skip-link { position: absolute; left: 16px; top: -60px; z-index: 20; padding: 10px 16px; background: var(--accent); color: #fff; border-radius: 0 0 10px 10px; font-weight: 600; text-decoration: none; }
+.skip-link:focus { top: 0; }
+main:focus { outline: none; }
+
 /* Header and footer */
 .site-header { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
 .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; }

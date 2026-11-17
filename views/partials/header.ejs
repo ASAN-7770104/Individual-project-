@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+  <%# Lets keyboard users jump over the navigation straight to the page content. %>
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="container nav">
       <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">&#128214;</span> Book Finder</a>
@@ -20,4 +22,4 @@
       </nav>
     </div>
   </header>
-  <main class="container">
+  <main id="main" class="container" tabindex="-1">
