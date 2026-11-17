@@ -1,0 +1,6 @@
+# Keep line endings the same on every computer (Windows would otherwise convert LF to CRLF).
+* text=auto eol=lf
+
+# Images must never be converted.
+*.png binary
+*.jpg binary
