@@ -4,6 +4,9 @@ node_modules/
 # Secrets and local configuration
 .env
 
+# Personal working draft of the AI declaration (the final one is submitted in Canvas)
+AI_DECLARATION_DRAFT.md
+
 # Logs
 *.log
 npm-debug.log*
