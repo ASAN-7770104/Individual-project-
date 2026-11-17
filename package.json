@@ -4,6 +4,9 @@
   "description": "Book search and statistics built with Express, Axios and EJS on top of the Open Library API.",
   "main": "app.js",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node app.js",
     "dev": "node --watch app.js",
