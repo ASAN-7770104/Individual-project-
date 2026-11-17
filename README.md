@@ -98,7 +98,25 @@ Open <http://localhost:3000>.
 | `OPENLIBRARY_BASE_URL` | `https://openlibrary.org` | API base URL |
 | `API_TIMEOUT_MS` | `10000` | how long to wait for the API |
 
-Useful scripts: `npm run dev` (restart on file changes), `npm test` (21 unit tests).
+Useful scripts: `npm run dev` (restart on file changes), `npm test` (29 tests).
+
+## Testing
+
+`npm test` runs the tests with Node's built-in test runner (no extra packages):
+
+| File | What it checks |
+|---|---|
+| `tests/bookStats.test.js` | data processing: description cleaning, decade chart, top authors, pagination |
+| `tests/validation.test.js` | the two validation middlewares (search form and ids in the URL) |
+| `tests/openLibraryService.test.js` | the API service against a fake local server: cache, 404 / 429 / 500 answers, retry, redirects, timeout |
+
+The service tests need no internet connection.
+
+## Troubleshooting
+
+- **`EADDRINUSE` (port already in use):** change `PORT` in `.env` (for example to `3001`) or stop the other program.
+- **A friendly error page says Open Library is slow or cannot be reached:** the API or your connection is having a problem. Wait a moment and search again; the server keeps running.
+- **Some covers show "No cover":** the cover server is sometimes slow. The page replaces a failed image by a box instead of a broken picture.
 
 ## Screenshots
 
